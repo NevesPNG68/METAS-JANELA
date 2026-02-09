@@ -42,6 +42,9 @@ const INITIAL_METRICS: MetricsState = {
 
 const App: React.FC = () => {
   const [metrics, setMetrics] = useState<MetricsState>(INITIAL_METRICS);
+  const [dateLabel, setDateLabel] = useState(
+    new Date().toLocaleDateString('pt-BR', { month: 'long', year: 'numeric' }).toUpperCase()
+  );
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   const gapRevenue = metrics.revenue.target - metrics.revenue.current;
@@ -130,7 +133,7 @@ const App: React.FC = () => {
               
               {/* Date hidden on mobile */}
               <div className="hidden md:block text-sm font-semibold bg-black text-janela-yellow px-4 py-1 rounded-full border border-black/10">
-                {new Date().toLocaleDateString('pt-BR', { month: 'long', year: 'numeric' }).toUpperCase()}
+                {dateLabel}
               </div>
             </div>
           </div>
@@ -227,7 +230,11 @@ const App: React.FC = () => {
         isOpen={isModalOpen}
         onClose={() => setIsModalOpen(false)}
         currentMetrics={metrics}
-        onSave={setMetrics}
+        currentDateLabel={dateLabel}
+        onSave={(newMetrics, newDateLabel) => {
+          setMetrics(newMetrics);
+          setDateLabel(newDateLabel);
+        }}
       />
     </>
   );
