@@ -231,10 +231,16 @@ const App: React.FC = () => {
         onClose={() => setIsModalOpen(false)}
         currentMetrics={metrics}
         currentDateLabel={dateLabel}
-        onSave={(newMetrics, newDateLabel) => {
-          setMetrics(newMetrics);
-          setDateLabel(newDateLabel);
-        }}
+       onSave={(newMetrics, newDateLabel) => {
+  // força uma cópia nova (nova referência) pra React recalcular/renderizar
+  const cloned = typeof structuredClone === 'function'
+    ? structuredClone(newMetrics)
+    : JSON.parse(JSON.stringify(newMetrics));
+
+  setMetrics(cloned);
+  setDateLabel(newDateLabel);
+}}
+
       />
     </>
   );
