@@ -100,7 +100,10 @@ const App: React.FC = () => {
   const revenueTarget = Number(metrics.revenue.target) || 0;
   const revenueCurrent = Number(metrics.revenue.current) || 0;
 
-  const gapRevenue = useMemo(() => revenueTarget - revenueCurrent, [revenueTarget, revenueCurrent]);
+  const gapRevenue = useMemo(
+    () => revenueTarget - revenueCurrent,
+    [revenueTarget, revenueCurrent]
+  );
 
   const revenuePct = useMemo(() => {
     if (revenueTarget <= 0) return 0;
@@ -228,7 +231,9 @@ const App: React.FC = () => {
                 {gapRevenue > 0 ? (
                   <>
                     Faltam{' '}
-                    <span className="text-white font-bold">{formatCurrency(gapRevenue)}</span>{' '}
+                    <span className="text-white font-bold">
+                      {formatCurrency(gapRevenue)}
+                    </span>{' '}
                     para meta.
                   </>
                 ) : (
@@ -244,7 +249,8 @@ const App: React.FC = () => {
                   </>
                 ) : (
                   <>
-                    Ticket Médio <span className="text-green-400 font-bold">acima</span> do ideal.
+                    Ticket Médio{' '}
+                    <span className="text-green-400 font-bold">acima</span> do ideal.
                   </>
                 )}
               </p>
@@ -272,31 +278,53 @@ const App: React.FC = () => {
                   <span className="text-xs text-zinc-500 block mb-1">PROJEÇÃO</span>
                   <p className="text-sm text-zinc-300">
                     {revenueTarget <= 0 ? (
-                      <>Defina a <span className="text-white font-bold">meta de faturamento</span> para calcular o progresso.</>
+                      <>
+                        Defina a{' '}
+                        <span className="text-white font-bold">
+                          meta de faturamento
+                        </span>{' '}
+                        para calcular o progresso.
+                      </>
                     ) : gapRevenue > 0 ? (
                       <>
-                        Falta <span className="text-white font-bold">{formatCurrency(gapRevenue)}</span> para atingir a meta
-                        {' '}(<span className="text-janela-yellow font-extrabold">{revenuePct.toFixed(1)}%</span> atingido).
+                        Falta{' '}
+                        <span className="text-white font-bold">
+                          {formatCurrency(gapRevenue)}
+                        </span>{' '}
+                        para atingir a meta (
+                        <span className="text-janela-yellow font-extrabold">
+                          {revenuePct.toFixed(1)}%
+                        </span>{' '}
+                        atingido).
                       </>
                     ) : (
                       <>
                         Meta atingida! Excedente de{' '}
-                        <span className="text-green-400 font-bold">{formatCurrency(Math.abs(gapRevenue))}</span>.
+                        <span className="text-green-400 font-bold">
+                          {formatCurrency(Math.abs(gapRevenue))}
+                        </span>
+                        .
                       </>
                     )}
                   </p>
                 </div>
 
-                {/* VOLUME DRINKS (ok, agora mostra percentual sempre) */}
+                {/* VOLUME DRINKS (percentual sempre) */}
                 <div className="bg-black/50 p-4 rounded border-l-2 border-zinc-700">
                   <span className="text-xs text-zinc-500 block mb-1">VOLUME DRINKS</span>
                   <p className="text-sm text-zinc-300">
                     {drinksTarget <= 0 ? (
-                      <>Defina a <span className="text-white font-bold">meta de drinks</span>.</>
+                      <>
+                        Defina a{' '}
+                        <span className="text-white font-bold">meta de drinks</span>.
+                      </>
                     ) : (
                       <>
                         Vendas em{' '}
-                        <span className="text-white font-bold">{drinksPct.toFixed(1)}%</span> da meta.
+                        <span className="text-white font-bold">
+                          {drinksPct.toFixed(1)}%
+                        </span>{' '}
+                        da meta.
                       </>
                     )}
                   </p>
@@ -306,7 +334,10 @@ const App: React.FC = () => {
 
             {/* Secondary Chart - Drink Share */}
             <div className="bg-janela-gray p-4 sm:p-6 rounded-lg shadow-lg border border-zinc-800 flex flex-col">
-              <ShareChart currentShare={metrics.share.current} targetShare={metrics.share.target} />
+              <ShareChart
+                currentShare={metrics.share.current}
+                targetShare={metrics.share.target}
+              />
 
               <div className="mt-auto pt-4 border-t border-zinc-800">
                 <div className="flex items-start gap-2 text-sm text-zinc-400">
@@ -347,3 +378,4 @@ const App: React.FC = () => {
 };
 
 export default App;
+
