@@ -52,16 +52,49 @@ const INITIAL_METRICS: MetricsState = {
   },
 };
 
-const App: React.FC = () => {
-  const [metrics, setMetrics] = useState<MetricsState>(INITIAL_METRICS);
+// chave do localStorage
+const STORAGE_KEY = 'metas-janela-v1';
 
-  const [dateLabel, setDateLabel] = useState(
-    new Date()
+const App: React.FC = () => {
+  // CARREGA métricas gravadas (se existirem)
+  const [metrics, setMetrics] = useState<MetricsState>(() => {
+    try {
+      const raw = localStorage.getItem(STORAGE_KEY);
+      if (!raw) return INITIAL_METRICS;
+      const parsed = JSON.parse(raw);
+      return (parsed.metrics as MetricsState) ?? INITIAL_METRICS;
+    } catch {
+      return INITIAL_METRICS;
+    }
+  });
+
+  // CARREGA o rótulo do mês gravado (se existir)
+  const [dateLabel, setDateLabel] = useState<string>(() => {
+    const fallback = new Date()
       .toLocaleDateString('pt-BR', { month: 'long', year: 'numeric' })
-      .toUpperCase()
-  );
+      .toUpperCase();
+
+    try {
+      const raw = localStorage.getItem(STORAGE_KEY);
+      if (!raw) return fallback;
+      const parsed = JSON.parse(raw);
+      if (parsed?.dateLabel) return parsed.dateLabel as string;
+      return fallback;
+    } catch {
+      return fallback;
+    }
+  });
 
   const [isModalOpen, setIsModalOpen] = useState(false);
+
+  // GRAVA automaticamente sempre que mudar
+  useEffect(() => {
+    try {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify({ metrics, dateLabel }));
+    } catch {
+      // se o storage falhar por qualquer motivo, não quebra o app
+    }
+  }, [metrics, dateLabel]);
 
   const gapRevenue = metrics.revenue.target - metrics.revenue.current;
 
@@ -216,10 +249,7 @@ const App: React.FC = () => {
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
             {/* Main Chart - Revenue */}
             <div className="lg:col-span-2 bg-janela-gray p-4 sm:p-6 rounded-lg shadow-lg border border-zinc-800">
-              <RevenueChart
-                current={metrics.revenue.current}
-                target={metrics.revenue.target}
-              />
+              <RevenueChart current={metrics.revenue.current} target={metrics.revenue.target} />
 
               <div className="mt-4 grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div className="bg-black/50 p-4 rounded border-l-2 border-janela-yellow">
@@ -234,8 +264,7 @@ const App: React.FC = () => {
                 <div className="bg-black/50 p-4 rounded border-l-2 border-zinc-700">
                   <span className="text-xs text-zinc-500 block mb-1">VOLUME DRINKS</span>
                   <p className="text-sm text-zinc-300">
-                    Vendas em{' '}
-                    {((metrics.drinks.current / metrics.drinks.target) * 100).toFixed(1)}%
+                    Vendas em {((metrics.drinks.current / metrics.drinks.target) * 100).toFixed(1)}%
                     da meta.
                   </p>
                 </div>
@@ -244,10 +273,7 @@ const App: React.FC = () => {
 
             {/* Secondary Chart - Drink Share */}
             <div className="bg-janela-gray p-4 sm:p-6 rounded-lg shadow-lg border border-zinc-800 flex flex-col">
-              <ShareChart
-                currentShare={metrics.share.current}
-                targetShare={metrics.share.target}
-              />
+              <ShareChart currentShare={metrics.share.current} targetShare={metrics.share.target} />
 
               <div className="mt-auto pt-4 border-t border-zinc-800">
                 <div className="flex items-start gap-2 text-sm text-zinc-400">
