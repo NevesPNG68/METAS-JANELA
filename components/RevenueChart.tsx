@@ -35,7 +35,7 @@ const RevenueChart: React.FC<{ current: number; target: number }> = ({ current, 
       </div>
 
       {/* Chart (menor + rosca mais fina) */}
-      <div className="relative w-full max-w-[520px] mx-auto h-[170px] sm:h-[190px]">
+     <div className="relative w-full h-[155px] sm:h-[175px]">
         <ResponsiveContainer width="100%" height="100%">
           <PieChart>
             <Pie
